@@ -1,0 +1,48 @@
+[advice]
+    statusHints = false
+
+[alias]
+    amend = commit --amend
+    branches = branch --all
+    churn = "!f() { git log --all -M -C --name-only --format='format:' \"$@\" | sort | grep -v '^$' | uniq -c | sort | awk 'BEGIN {print \"count\tfile\"} {print $1 \"\t\" $2}'; }; f"
+    ci = commit
+    civ = commit --verbose
+    co = checkout
+    d = diff
+    dc = diff --cached
+    graph = log --graph --decorate --oneline
+    ls-ignored = ls-files --others --ignored --exclude-standard
+    po = push --set-upstream origin HEAD
+    pretty = log --graph --pretty="tformat:%C(yellow)%h%Creset %Cgreen(%ar)%Creset %C(bold blue)<%an>%Creset %C(red)%d%Creset %s"
+    remotes = remote --verbose
+    s = status --short --branch
+    stashes = stash list
+    sp = stash pop
+    unstage = reset HEAD
+
+[branch]
+    autosetupmerge = always
+    autosetuprebase = always
+
+[color]
+    ui = auto
+
+[core]
+    excludesfile = ~/.gitignore_global
+    autocrlf = input
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+[pull]
+    rebase = true
+
+[push]
+    default = simple
+    autoSetupRemote = true
+
+[include]
+    path = ~/.gitconfig.user
