@@ -345,7 +345,8 @@ $wingetPackages = @(
     "JesseDuffield.lazygit",
     "Microsoft.PowerToys",
     "Microsoft.VisualStudioCode",
-    "Microsoft.WindowsTerminal"
+    "Microsoft.WindowsTerminal",
+    "Microsoft.WindowsApp"
 )
 
 $scoopPackages = @(
