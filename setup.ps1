@@ -338,15 +338,21 @@ $symlinks = @{
 $wingetPackages = @(
     "AgileBits.1Password.CLI",
     "AgileBits.1Password",
+    "ajeetdsouza.zoxide",
     "Armin2208.WindowsAutoNightMode",
+    "astral-sh.uv",
+    "BurntSushi.ripgrep.MSVC",
     "Git.Git",
-    "GitHub.cli",
-    "JanDeDobbeleer.OhMyPosh",
     "JesseDuffield.lazygit",
+    "jqlang.jq",
+    "junegunn.fzf",
     "Microsoft.PowerToys",
     "Microsoft.VisualStudioCode",
-    "Microsoft.WindowsTerminal",
     "Microsoft.WindowsApp"
+    "Microsoft.WindowsTerminal",
+    "sharkdp.bat",
+    "sharkdp.fd",
+    "sxyazi.yazi"
 )
 
 $scoopPackages = @(
