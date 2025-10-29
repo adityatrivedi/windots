@@ -1,0 +1,4 @@
+# Work-specific Git configuration
+[user]
+	name = Aditya Trivedi
+	email = atrivedi@microsoft.com

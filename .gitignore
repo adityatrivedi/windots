@@ -1,0 +1,66 @@
+# Keeps repo focused on intentional configuration, not machine state.
+
+# OS files (Windows / macOS)
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.DS_Store
+Icon?
+
+# Archives / dumps / temp
+*.zip
+*.tar
+*.tar.*
+*.7z
+*.rar
+*.gz
+*.tgz
+*.bak
+*.tmp
+*.temp
+*.old
+*.orig
+*.rej
+*.log
+
+# Editor metadata
+.vscode/
+*.code-workspace
+
+# Swap / lock / session files
+*.swp
+*.swo
+*.lock
+
+# Executables
+*.exe
+*.exe~
+
+# PowerShell transcripts & local artifacts
+PowerShell_transcript*/
+*.ps1.xml
+
+# Local override files (user-specific secrets / overrides)
+.gitconfig.local
+*.local.*
+
+# Patch / diff scratch
+*.patch
+*.diff
+
+# Caches (generic)
+.cache/
+*.cache/
+.cache/**
+
+# Tool-specific runtime state inside .config
+.config/**/cache/**
+.config/**/Cache/**
+.config/**/logs/**
+.config/**/log/**
+.config/**/sessions/**
+.config/**/session/**
+
+# Allow explicitly tracked cache/log directories if ever added intentionally
+!*/.keep

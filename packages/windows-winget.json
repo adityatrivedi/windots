@@ -1,0 +1,22 @@
+[
+  { "id": "AgileBits.1Password.CLI" },
+  { "id": "AgileBits.1Password" },
+  { "id": "ajeetdsouza.zoxide" },
+  { "id": "BurntSushi.ripgrep.MSVC" },
+  { "id": "eza-community.eza" },
+  { "id": "Fastfetch-cli.Fastfetch" },
+  { "id": "Git.Git" },
+  { "id": "JesseDuffield.lazygit" },
+  { "id": "jqlang.jq" },
+  { "id": "junegunn.fzf" },
+  { "id": "Microsoft.PowerShell" },
+  { "id": "Microsoft.PowerToys" },
+  { "id": "Microsoft.VisualStudioCode" },
+  { "id": "Microsoft.WindowsApp" },
+  { "id": "Neovim.Neovim", "scope": "machine" },
+  { "id": "sharkdp.bat" },
+  { "id": "sharkdp.fd" },
+  { "id": "Starship.Starship" },
+  { "id": "sxyazi.yazi" },
+  { "id": "wez.wezterm", "scope": "machine" }
+]

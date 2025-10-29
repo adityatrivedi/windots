@@ -1,0 +1,38 @@
+[user]
+	# Default user info (personal)
+	name = Aditya Trivedi
+	email = me@aditya.io
+[includeIf "gitdir:q:/"]
+	path = ~/.config/git/config-work
+
+[core]
+	safecrlf = warn
+    filemode = false
+    autocrlf = input
+    fsmonitor = true
+[alias]
+    amend = commit --amend
+    branches = branch --all
+    ci = commit
+    co = checkout
+    d = diff
+    dc = diff --cached
+    graph = log --graph --decorate --oneline
+    po = push --set-upstream origin HEAD
+    remotes = remote --verbose
+    s = status --short --branch
+    stashes = stash list
+    unstage = reset HEAD
+[maintenance]
+    auto = true
+    strategy = incremental
+[color]
+    ui = auto
+[status]
+    showsubmoduleSummary = true
+[fetch]
+    negotiationAlgorithm = skipping
+    parallel = 4
+    prune = true
+[gc]
+    writeCommitGraph = true

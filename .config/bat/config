@@ -1,0 +1,7 @@
+# Documentation: https://github.com/sharkdp/bat#configuration
+
+--theme="Catppuccin Macchiato"
+--style="numbers,changes,grid"
+--pager="less -FRX"
+--wrap=auto
+--tabs=4

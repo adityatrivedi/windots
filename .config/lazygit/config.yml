@@ -1,0 +1,27 @@
+# Docs: https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+
+gui:
+  nerdFontsVersion: "3"
+  theme:
+    lightTheme: false
+    # Catppuccin Macchiato palette
+    activeBorderColor: ["#8aadf4", "bold"]
+    inactiveBorderColor: ["#494d64"]
+    optionsTextColor: ["#b7bdf8"]
+    selectedLineBgColor: ["#363a4f"]
+    selectedRangeBgColor: ["#363a4f"]
+    cherryPickedCommitBgColor: ["#494d64"]
+    cherryPickedCommitFgColor: ["#8aadf4"]
+  unstagedChangesColor: ["#ed8796"]
+  defaultFgColor: ["#cad3f5"]
+  searchingActiveBorderColor: ["#eed49f", "bold"]
+  showFileTree: true
+  showIcons: true
+
+git:
+  paging:
+    colorArg: always
+    pager: "bat --style=plain --paging=never"
+
+quitOnTopLevelReturn: true
+notARepository: "skip"
