@@ -15,6 +15,41 @@ param (
     [switch]$Verify,
     [switch]$Help
 )
+
+############################################################
+# Handle irm | iex scenario (no $PSScriptRoot)
+############################################################
+if (-not $PSScriptRoot) {
+    # Running via irm | iex - download and run the real bootstrap
+    $defaultZip = 'https://github.com/adityatrivedi/windots/archive/refs/heads/main.zip'
+    $dot = Join-Path $HOME '.dotfiles'
+
+    Write-Host '[INFO] Detected remote execution (irm | iex). Downloading repository...' -ForegroundColor Cyan
+
+    if (-not (Test-Path $dot)) { New-Item -ItemType Directory -Path $dot -Force | Out-Null }
+
+    $zip = Join-Path $env:TEMP 'dotfiles.zip'
+    Invoke-WebRequest -Uri $defaultZip -OutFile $zip -UseBasicParsing
+
+    Write-Host '[INFO] Extracting repository...' -ForegroundColor Cyan
+    $tmpDir = Join-Path $env:TEMP ('dotfiles_' + [Guid]::NewGuid())
+    New-Item -ItemType Directory -Path $tmpDir -Force | Out-Null
+    Expand-Archive -Path $zip -DestinationPath $tmpDir -Force
+
+    $inner = Get-ChildItem $tmpDir -Directory | Select-Object -First 1
+    if (-not $inner) { throw 'Archive did not contain a directory.' }
+
+    Copy-Item -Path (Join-Path $inner.FullName '*') -Destination $dot -Recurse -Force
+    Remove-Item $zip -Force -ErrorAction SilentlyContinue
+    Remove-Item $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+
+    Write-Host '[ OK ] Repository extracted. Running bootstrap...' -ForegroundColor Green
+
+    # Run the actual bootstrap from disk
+    & (Join-Path $dot 'bin\bootstrap.ps1') -ElevateLink -Verify
+    return
+}
+
 ############################################################
 # Initialization
 ############################################################
