@@ -2,7 +2,7 @@
 	# Default user info (personal)
 	name = Aditya Trivedi
 	email = me@aditya.io
-[includeIf "gitdir:q:/"]
+[includeIf "gitdir/i:q:/"]
 	path = ~/.config/git/config-work
 
 [core]
