@@ -4,8 +4,8 @@ Bootstraps dotfiles environment on a Windows system.
 
 .DESCRIPTION
 Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
-verifies winget, fetches or uses local repo, installs packages, modules, fonts, creates
-symlinked config directories, installs profile stubs, and runs self-tests optionally.
+verifies winget, fetches or uses local repo, installs packages (including fonts), modules,
+creates symlinked config directories, installs profile stubs, and runs self-tests optionally.
 #>
 [CmdletBinding()]
 param (
@@ -84,8 +84,8 @@ Behavior Summary:
     2. Sets XDG_CONFIG_HOME (user scope) if not already set.
     3. Verifies winget availability.
     4. Acquires repo (from ZIP if provided) into $HOME/.dotfiles.
-    5. Installs packages, modules, font, links configs, installs profile stubs.
-    6. Optional self-test (package drift, font, profile, symlink check).
+    5. Installs packages (including fonts via winget), modules, links configs, installs profile stubs.
+    6. Optional self-test (package drift, profile, symlink check).
     7. Provides audit/revert scripts for later maintenance.
 '@ | Write-Host
 }
@@ -161,8 +161,6 @@ function Test-WingetAvailable {
     if (Get-Command winget -ErrorAction SilentlyContinue) { Write-Ok 'Winget is available.'; return }
     throw "Winget is not available. Please install 'App Installer' from the Microsoft Store, and then re-run the bootstrap script."
 }
-
-function Invoke-FontInstall { param(); & "$PSScriptRoot/fonts.ps1" }
 
 function Invoke-PackageInstall { param(); & "$PSScriptRoot/install.ps1" }
 
@@ -255,7 +253,6 @@ try {
     Push-Location $repoPath
     Invoke-PackageInstall
     & "$PSScriptRoot/modules.ps1" -Quiet:$Quiet
-    Invoke-FontInstall
     # Create symlinks; if it fails and -ElevateLink is set, retry with elevation
     try {
         Set-ConfigLinks
