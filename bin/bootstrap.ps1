@@ -4,6 +4,7 @@ Bootstraps dotfiles environment on a Windows system.
 
 .DESCRIPTION
 Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
+Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
 verifies winget, uses local repo, installs packages, modules, fonts, creates symlinked
 config directories, installs profile stubs, and runs self-tests optionally.
 #>
@@ -160,8 +161,6 @@ function Test-WingetAvailable {
     throw "Winget is not available. Please install 'App Installer' from the Microsoft Store, and then re-run the bootstrap script."
 }
 
-function Invoke-FontInstall { param(); & "$PSScriptRoot/fonts.ps1" }
-
 function Invoke-PackageInstall { param(); & "$PSScriptRoot/install.ps1" }
 
 function Set-ConfigLinks { param(); & "$PSScriptRoot/link.ps1" -Force -Quiet:$Quiet }
@@ -235,7 +234,6 @@ try {
     Push-Location $repoPath
     Invoke-PackageInstall
     & "$PSScriptRoot/modules.ps1" -Quiet:$Quiet
-    Invoke-FontInstall
     # Create symlinks; if it fails and -ElevateLink is set, retry with elevation
     try {
         Set-ConfigLinks

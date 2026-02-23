@@ -61,14 +61,13 @@ Key bootstrap flags:
 3. Normalizes environment (sets `XDG_CONFIG_HOME`, ensures consistent `$HOME/.config`)
 4. Installs Winget packages from manifest (idempotent, skip if already present)
 5. Installs required PowerShell modules (PSReadLine, CompletionPredictor) in current user scope
-6. Installs Cascadia Code Nerd Font (user scope) if missing
-7. Creates profile stubs that dot-source the central profile
-8. Links repo `.config/*` into `$HOME/.config/*` via symbolic links
+6. Creates profile stubs that dot-source the central profile
+7. Links repo `.config/*` into `$HOME/.config/*` via symbolic links
 
 - Also ensures `%USERPROFILE%\.gitconfig` includes `~/.config/git/config` so Git reads the XDG config
 
-9. Runs optional verification (`self-test.ps1`) if `-Verify`
-10. Provides audit tooling to detect drift later (`audit.ps1`)
+8. Runs optional verification (`self-test.ps1`) if `-Verify`
+9. Provides audit tooling to detect drift later (`audit.ps1`)
 
 ---
 
@@ -93,12 +92,11 @@ git pull && ./bin/bootstrap.ps1 -ElevateLink -Verify
 | Path / Script                  | Purpose                                                            |
 | ------------------------------ | ------------------------------------------------------------------ |
 | `bin/bootstrap.ps1`            | Orchestrates full setup; supports `-ElevateLink -Verify -Quiet`.   |
-| `bin/install.ps1`              | Package installation from Winget manifest.                         |
+| `bin/install.ps1`              | Package installation from Winget manifest (including fonts).       |
 | `bin/modules.ps1`              | Ensures required PS modules (current-user scope).                  |
-| `bin/fonts.ps1`                | Cascadia Code Nerd Font installer (idempotent).                    |
 | `bin/link.ps1`                 | Creates symlinks for all `.config` entries.                        |
 | `bin/profile-setup.ps1`        | Installs PowerShell profile stubs.                                 |
-| `bin/self-test.ps1`            | Post-setup validation (symlink, packages, font, modules, profile). |
+| `bin/self-test.ps1`            | Post-setup validation (symlink, packages, modules, profile).       |
 | `bin/audit.ps1`                | Drift detection vs. manifest (JSON or table output).               |
 | `bin/revert.ps1`               | Selective or full cleanup (`-All`, supports `-WhatIf`).            |
 | `bin/_common.ps1`              | Shared logging & helpers.                                          |
@@ -160,10 +158,10 @@ Actual cleanup:
 .\bin\revert.ps1 -All
 ```
 
-Selective (links + fonts only):
+Selective (links only):
 
 ```powershell
-.\bin\revert.ps1 -RemoveLinks -RemoveFonts
+.\bin\revert.ps1 -RemoveLinks
 ```
 
 ---
