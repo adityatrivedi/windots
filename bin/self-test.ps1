@@ -3,7 +3,7 @@
 Runs post-bootstrap validation tests.
 
 .DESCRIPTION
-Executes a series of idempotent checks (symlink capability or existing links, font,
+Executes a series of idempotent checks (symlink capability or existing links,
 packages, modules, profile stubs) and reports pass/warn/fail results with exit codes.
 #>
 [CmdletBinding()]
@@ -67,13 +67,7 @@ Test-Step 'SymlinkCapability' {
     }
 } -WarnOnFail
 
-# 2 Font present
-Test-Step 'FontInstalled' {
-    $fontsDir = Join-Path $env:LOCALAPPDATA 'Microsoft/Windows/Fonts'
-    Get-ChildItem -Path $fontsDir -Filter '*Cascadia*Code*NF*.ttf' -ErrorAction Stop | Out-Null
-}
-
-# 3 Packages installed
+# 2 Packages installed (includes font)
 Test-Step 'PackagesInstalled' {
     $list = winget list 2>$null | Out-String
     $pkgFile = Join-Path (Split-Path $PSScriptRoot -Parent) 'packages/windows-winget.json'
@@ -84,7 +78,7 @@ Test-Step 'PackagesInstalled' {
     }
 }
 
-# 4 PS Modules (fallback to InstalledModule if ListAvailable misses it)
+# 3 PS Modules (fallback to InstalledModule if ListAvailable misses it)
 Test-Step 'ModulesInstalled' {
     foreach ($m in 'PSReadLine', 'CompletionPredictor') {
         $list = Get-Module -ListAvailable -Name $m -ErrorAction SilentlyContinue
@@ -95,7 +89,7 @@ Test-Step 'ModulesInstalled' {
     }
 }
 
-# 5 Profile stub
+# 4 Profile stub
 Test-Step 'ProfileStub' {
     $p1 = Join-Path $HOME 'Documents/PowerShell/Microsoft.PowerShell_profile.ps1'
     $p2 = Join-Path $HOME 'Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1'
