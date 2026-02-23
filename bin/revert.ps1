@@ -3,7 +3,7 @@
 Reverts prior dotfiles setup actions selectively or entirely.
 
 .DESCRIPTION
-Supports granular removal of links, packages, fonts, profile stubs, modules, environment
+Supports granular removal of links, packages, profile stubs, modules, environment
 variables, and extracted repo copy. Use -All to perform every revert action.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -11,7 +11,6 @@ param(
     [switch]$Quiet,
     [switch]$RemoveLinks,
     [switch]$UninstallPackages,
-    [switch]$RemoveFonts,
     [switch]$RemoveProfiles,
     [switch]$UninstallModules,
     [switch]$ResetEnv,
@@ -77,22 +76,6 @@ function Uninstall-Packages {
             else { Write-Warn "Unable to uninstall ${id}: $output" }
         }
         else { Write-Info "Would uninstall: $id." }
-    }
-}
-
-function Remove-Fonts {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='Medium')]
-    param()
-    $fontsDir = Join-Path $env:LOCALAPPDATA 'Microsoft\Windows\Fonts'
-    if (-not (Test-Path $fontsDir)) { return }
-    $patterns = @('*Caskaydia*NF*.ttf', '*Cascadia*Code*NF*.ttf')
-    foreach ($p in $patterns) {
-        Get-ChildItem -Path $fontsDir -Filter $p -ErrorAction SilentlyContinue | ForEach-Object {
-            if ($PSCmdlet.ShouldProcess($_.FullName, 'Remove font')) {
-                Remove-Item -LiteralPath $_.FullName -Force -Confirm:$false
-                Write-Ok "Removed font: $($_.Name)."
-            }
-        }
     }
 }
 
@@ -165,11 +148,10 @@ function Remove-Repo {
 ############################################################
 try {
     if ($All) {
-        $RemoveLinks = $true; $UninstallPackages = $true; $RemoveFonts = $true; $RemoveProfiles = $true; $UninstallModules = $true; $ResetEnv = $true; $RemoveRepo = $true
+        $RemoveLinks = $true; $UninstallPackages = $true; $RemoveProfiles = $true; $UninstallModules = $true; $ResetEnv = $true; $RemoveRepo = $true
     }
     if ($RemoveLinks) { Remove-ConfigLinks }
     if ($UninstallPackages) { Uninstall-Packages }
-    if ($RemoveFonts) { Remove-Fonts }
     if ($RemoveProfiles) { Remove-ProfileStubs }
     if ($UninstallModules) { Uninstall-Modules }
     if ($ResetEnv) { Reset-Env }
