@@ -4,12 +4,11 @@ Bootstraps dotfiles environment on a Windows system.
 
 .DESCRIPTION
 Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
-verifies winget, fetches or uses local repo, installs packages (including fonts), modules,
-creates symlinked config directories, installs profile stubs, and runs self-tests optionally.
+verifies winget, uses local repo, installs packages, modules, fonts, creates symlinked
+config directories, installs profile stubs, and runs self-tests optionally.
 #>
 [CmdletBinding()]
 param (
-    [string]$RepoZipUrl,
     [switch]$Quiet,
     [switch]$ElevateLink,
     [switch]$Verify,
@@ -64,7 +63,6 @@ function Show-BootstrapHelp {
 Usage: bootstrap.ps1 [options]
 
 Options:
-    -RepoZipUrl <URL>  Download & use a ZIP archive (no git clone needed). If omitted, assumes current directory is the repo.
     -ElevateLink       If non-admin symlink creation fails, elevate ONLY the link step (principle of least privilege).
     -Verify            Run self-test after setup (invokes self-test.ps1).
     -Quiet             Suppress informational [INFO] messages (warnings/errors still shown).
@@ -73,19 +71,19 @@ Options:
 Standard PowerShell common parameters (e.g. -Verbose, -WhatIf where supported) are also available.
 
 Examples:
-    # Fresh setup using remote archive (will extract into $HOME/.dotfiles):
-    ./bin/bootstrap.ps1 -RepoZipUrl https://github.com/user/repo/archive/refs/heads/main.zip -ElevateLink -Verify
+    # One-liner (downloads & sets up automatically):
+    irm https://raw.githubusercontent.com/adityatrivedi/windots/main/bin/bootstrap.ps1 | iex
 
-    # Existing clone, minimized noise:
+    # Already cloned, minimized noise:
     ./bin/bootstrap.ps1 -ElevateLink -Quiet
 
 Behavior Summary:
     1. Ensures (or enables) Developer Mode for symlink privilege (may elevate only that registry write).
     2. Sets XDG_CONFIG_HOME (user scope) if not already set.
     3. Verifies winget availability.
-    4. Acquires repo (from ZIP if provided) into $HOME/.dotfiles.
-    5. Installs packages (including fonts via winget), modules, links configs, installs profile stubs.
-    6. Optional self-test (package drift, profile, symlink check).
+    4. Detects repo location ($HOME/.dotfiles or current directory).
+    5. Installs packages, modules, font, links configs, installs profile stubs.
+    6. Optional self-test (package drift, font, profile, symlink check).
     7. Provides audit/revert scripts for later maintenance.
 '@ | Write-Host
 }
@@ -169,30 +167,12 @@ function Set-ConfigLinks { param(); & "$PSScriptRoot/link.ps1" -Force -Quiet:$Qu
 function Get-RepoLocal {
     param()
     $dot = Join-Path $HOME '.dotfiles'
-    # Check if .dotfiles already exists and has content
+    # Check if .dotfiles already exists and has content (e.g. from one-liner install)
     if (Test-Path (Join-Path $dot '.config')) { return $dot }
-    
-    # If no URL provided, assume current directory is the repo
-    if (-not $RepoZipUrl) {
-        Write-Info 'No -RepoZipUrl was provided. Assuming the current folder is the repository.'
-        return (Get-Location).Path
-    }
-    
-    # Only create .dotfiles directory when we're about to download and extract
-    if (-not (Test-Path $dot)) { New-Item -ItemType Directory -Path $dot | Out-Null }
-    
-    $zip = Join-Path $env:TEMP 'dotfiles.zip'
-    Write-Info "Downloading repository archive from $RepoZipUrl."
-    Invoke-WebRequest -Uri $RepoZipUrl -OutFile $zip -UseBasicParsing
-    Write-Info 'Extracting the repository archive.'
-    $tmpDir = Join-Path $env:TEMP ('dotfiles_' + [Guid]::NewGuid())
-    New-Item -ItemType Directory -Path $tmpDir | Out-Null
-    Expand-Archive -Path $zip -DestinationPath $tmpDir -Force
-    $inner = Get-ChildItem $tmpDir | Where-Object { $_.PSIsContainer } | Select-Object -First 1
-    if (-not $inner) { throw 'The repository archive did not contain a directory.' }
-    Copy-Item -Path (Join-Path $inner.FullName '*') -Destination $dot -Recurse -Force
-    Write-Ok "Repository extracted to $dot."
-    return $dot
+
+    # Otherwise assume current directory is the repo (git clone workflow)
+    Write-Info 'Assuming the current folder is the repository.'
+    return (Get-Location).Path
 }
 
 function Ensure-BatSystemBatConfigSymlink {
@@ -313,7 +293,7 @@ try {
     if ($Verify) { & "$PSScriptRoot/self-test.ps1" -Quiet:$Quiet }
     Pop-Location
     Write-Ok 'Bootstrap completed successfully.'
-    Write-Info 'To update later, run bin/sync.ps1 to download the latest archive and refresh links.'
+    Write-Info 'To update later, re-run the one-liner or run git pull && ./bin/bootstrap.ps1 from your clone.'
 }
 catch {
     Write-Err $_

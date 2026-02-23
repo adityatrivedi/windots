@@ -13,6 +13,7 @@ Opinionated, Windows only dotfiles with:
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
   - [What Bootstrap Does](#what-bootstrap-does)
+  - [Updating](#updating)
   - [Repository Layout](#repository-layout)
   - [Winget Manifest](#winget-manifest)
   - [Audit \& Self-Test](#audit--self-test)
@@ -31,14 +32,6 @@ One‑liner
 irm https://raw.githubusercontent.com/adityatrivedi/windots/main/bin/bootstrap.ps1 | iex
 ```
 
-ZIP (no Git needed):
-
-```powershell
-$zipUrl = 'https://github.com/adityatrivedi/windots/archive/refs/heads/main.zip'
-Invoke-WebRequest $zipUrl -OutFile dotfiles.zip; Expand-Archive dotfiles.zip -DestinationPath $HOME\.dotfiles -Force
-$HOME\.dotfiles\bin\bootstrap.ps1 -RepoZipUrl $zipUrl -ElevateLink -Verify -Quiet
-```
-
 Already cloned / extracted:
 
 ```powershell
@@ -53,7 +46,6 @@ Show help / options:
 
 Key bootstrap flags:
 
-- `-RepoZipUrl <URL>` Download & extract on the fly (no Git requirement)
 - `-ElevateLink` Elevate only if needed for symlink creation
 - `-Verify` Run self-test at end
 - `-Quiet` Suppress informational logs
@@ -79,6 +71,22 @@ Key bootstrap flags:
 
 ---
 
+## Updating
+
+**One-liner users:** Re-run the one-liner — it re-downloads the latest archive, overwrites `~/.dotfiles`, and re-runs bootstrap (fully idempotent):
+
+```powershell
+irm https://raw.githubusercontent.com/adityatrivedi/windots/main/bin/bootstrap.ps1 | iex
+```
+
+**Clone users:** Pull the latest changes and re-run bootstrap:
+
+```powershell
+git pull && ./bin/bootstrap.ps1 -ElevateLink -Verify
+```
+
+---
+
 ## Repository Layout
 
 | Path / Script                  | Purpose                                                            |
@@ -90,7 +98,6 @@ Key bootstrap flags:
 | `bin/profile-setup.ps1`        | Installs PowerShell profile stubs.                                 |
 | `bin/self-test.ps1`            | Post-setup validation (symlink, packages, modules, profile).       |
 | `bin/audit.ps1`                | Drift detection vs. manifest (JSON or table output).               |
-| `bin/sync.ps1`                 | Re-downloads fresh ZIP & relinks (lightweight update).             |
 | `bin/revert.ps1`               | Selective or full cleanup (`-All`, supports `-WhatIf`).            |
 | `bin/_common.ps1`              | Shared logging & helpers.                                          |
 | `packages/windows-winget.json` | Canonical package ID list.                                         |
