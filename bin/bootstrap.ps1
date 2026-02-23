@@ -4,7 +4,6 @@ Bootstraps dotfiles environment on a Windows system.
 
 .DESCRIPTION
 Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
-Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
 verifies winget, uses local repo, installs packages, modules, fonts, creates symlinked
 config directories, installs profile stubs, and runs self-tests optionally.
 #>
