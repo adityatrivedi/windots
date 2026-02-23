@@ -7,6 +7,7 @@
   { "id": "eza-community.eza" },
   { "id": "Fastfetch-cli.Fastfetch" },
   { "id": "Git.Git" },
+  { "id": "GitHub.Copilot" },
   { "id": "JesseDuffield.lazygit" },
   { "id": "jqlang.jq" },
   { "id": "junegunn.fzf" },
