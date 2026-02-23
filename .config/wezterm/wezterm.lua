@@ -4,9 +4,8 @@ local config = wezterm.config_builder and wezterm.config_builder() or {}
 
 -- Font fallback (first available in list is used) + emoji
 config.font = wezterm.font_with_fallback {
-  'Cascadia Code NF',
-  'CaskaydiaCove Nerd Font',
-  'Cascadia Code',
+  'JetBrainsMono Nerd Font',
+  'JetBrains Mono',
   'Consolas',
   'Segoe UI Emoji',
 }
