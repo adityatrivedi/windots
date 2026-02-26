@@ -99,8 +99,10 @@ git pull && ./bin/bootstrap.ps1 -ElevateLink -Verify
 | `bin/self-test.ps1`            | Post-setup validation (symlink, packages, modules, profile).       |
 | `bin/audit.ps1`                | Drift detection vs. manifest (JSON or table output).               |
 | `bin/revert.ps1`               | Selective or full cleanup (`-All`, supports `-WhatIf`).            |
+| `bin/wt-theme.ps1`             | Windows Terminal theme export/import.                              |
 | `bin/_common.ps1`              | Shared logging & helpers.                                          |
 | `packages/windows-winget.json` | Canonical package ID list.                                         |
+| `packages/windows-terminal-theme.json` | Exported Windows Terminal theme data.                    |
 | `.config/`                     | Tool configuration directory (XDG-style).                          |
 
 ---
@@ -186,6 +188,30 @@ Add config: place under `.config\<tool>` → rerun `.\bin\link.ps1 -Force`.
 Add package: modify manifest → run `.\bin\install.ps1` → verify with `.\bin\audit.ps1`.
 
 Add initialization logic: extend central profile with guarded `Initialize-*` functions (keep vendor init isolated & optional).
+
+---
+
+## Windows Terminal Theme
+
+Theme data (color schemes, UI themes, profile defaults for colorScheme and font) is stored in `packages/windows-terminal-theme.json` and applied automatically during bootstrap.
+
+Export the theme from your current machine:
+
+```powershell
+./bin/wt-theme.ps1 -Export
+```
+
+Import on another machine (also runs during bootstrap):
+
+```powershell
+./bin/wt-theme.ps1 -Import
+```
+
+Revert (remove imported theme from Windows Terminal):
+
+```powershell
+.\bin\revert.ps1 -RevertTheme
+```
 
 ---
 

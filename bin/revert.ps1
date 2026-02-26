@@ -14,6 +14,7 @@ param(
     [switch]$RemoveProfiles,
     [switch]$UninstallModules,
     [switch]$ResetEnv,
+    [switch]$RevertTheme,
     [switch]$RemoveRepo,
     [switch]$All
 )
@@ -143,18 +144,61 @@ function Remove-Repo {
     }
 }
 
+function Revert-WTTheme {
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='Low')]
+    param()
+    $themeFile = Join-Path $repoRoot 'packages\windows-terminal-theme.json'
+    if (-not (Test-Path $themeFile)) { Write-Info 'No saved theme file; skipping theme revert.'; return }
+
+    $candidates = Get-ChildItem "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal*\LocalState\settings.json" -ErrorAction SilentlyContinue
+    if (-not $candidates) { Write-Info 'Windows Terminal not installed; skipping theme revert.'; return }
+    $wtSettingsPath = ($candidates | Select-Object -First 1).FullName
+
+    $theme    = Get-Content -Raw -LiteralPath $themeFile | ConvertFrom-Json
+    $settings = Get-Content -Raw -LiteralPath $wtSettingsPath | ConvertFrom-Json
+
+    # Remove imported schemes by name
+    if ($settings.PSObject.Properties['schemes'] -and $theme.PSObject.Properties['schemes']) {
+        $importedNames = @($theme.schemes | ForEach-Object { $_.name })
+        $settings.schemes = @($settings.schemes | Where-Object { $_.name -notin $importedNames })
+    }
+    # Remove imported themes by name
+    if ($settings.PSObject.Properties['themes'] -and $theme.PSObject.Properties['themes']) {
+        $importedNames = @($theme.themes | ForEach-Object { $_.name })
+        $settings.themes = @($settings.themes | Where-Object { $_.name -notin $importedNames })
+    }
+    # Clear profile defaults set by import
+    if ($theme.PSObject.Properties['profileDefaults'] -and $settings.PSObject.Properties['profiles'] -and $settings.profiles.PSObject.Properties['defaults']) {
+        $pd = $theme.profileDefaults
+        if ($pd.PSObject.Properties['colorScheme'] -and $settings.profiles.defaults.PSObject.Properties['colorScheme']) {
+            if ($settings.profiles.defaults.colorScheme -eq $pd.colorScheme) {
+                $settings.profiles.defaults.PSObject.Properties.Remove('colorScheme')
+            }
+        }
+        if ($pd.PSObject.Properties['font'] -and $settings.profiles.defaults.PSObject.Properties['font']) {
+            $settings.profiles.defaults.PSObject.Properties.Remove('font')
+        }
+    }
+
+    if ($PSCmdlet.ShouldProcess($wtSettingsPath, 'Revert imported Windows Terminal theme')) {
+        $settings | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $wtSettingsPath -Encoding UTF8
+        Write-Ok 'Reverted Windows Terminal theme.'
+    }
+}
+
 ############################################################
 # Execution
 ############################################################
 try {
     if ($All) {
-        $RemoveLinks = $true; $UninstallPackages = $true; $RemoveProfiles = $true; $UninstallModules = $true; $ResetEnv = $true; $RemoveRepo = $true
+        $RemoveLinks = $true; $UninstallPackages = $true; $RemoveProfiles = $true; $UninstallModules = $true; $ResetEnv = $true; $RevertTheme = $true; $RemoveRepo = $true
     }
     if ($RemoveLinks) { Remove-ConfigLinks }
     if ($UninstallPackages) { Uninstall-Packages }
     if ($RemoveProfiles) { Remove-ProfileStubs }
     if ($UninstallModules) { Uninstall-Modules }
     if ($ResetEnv) { Reset-Env }
+    if ($RevertTheme) { Revert-WTTheme }
     if ($RemoveRepo) { Remove-Repo }
     Write-Ok 'Revert completed.'
 }

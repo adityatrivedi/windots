@@ -289,6 +289,7 @@ try {
         else { throw }
     }
     & "$PSScriptRoot/profile-setup.ps1" -Quiet:$Quiet
+    & "$PSScriptRoot/wt-theme.ps1" -Import -Quiet:$Quiet
     Ensure-BatSystemBatConfigSymlink
     if ($Verify) { & "$PSScriptRoot/self-test.ps1" -Quiet:$Quiet }
     Pop-Location
