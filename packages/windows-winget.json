@@ -3,7 +3,7 @@
   { "id": "AgileBits.1Password" },
   { "id": "ajeetdsouza.zoxide" },
   { "id": "BurntSushi.ripgrep.MSVC" },
-  { "id": "DEVCOM.JetBrainsMonoNerdFont" },
+  { "id": "DEVCOM.JetBrainsMonoNerdFont", "scope": "machine" },
   { "id": "eza-community.eza" },
   { "id": "Fastfetch-cli.Fastfetch" },
   { "id": "Git.Git" },
