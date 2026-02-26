@@ -44,7 +44,11 @@ function Set-TrustedPSGallery {
     param()
     try {
         $repo = Get-PSRepository -Name 'PSGallery' -ErrorAction Stop
-        if ($repo.InstallationPolicy -ne 'Trusted') {
+        # Newer PSResourceGet exposes a bool 'Trusted' property; legacy PowerShellGet uses 'InstallationPolicy'.
+        $isTrusted = if ($null -ne $repo.PSObject.Properties['Trusted']) { $repo.Trusted }
+                     elseif ($null -ne $repo.PSObject.Properties['InstallationPolicy']) { $repo.InstallationPolicy -eq 'Trusted' }
+                     else { $false }
+        if (-not $isTrusted) {
             Write-Info 'Setting PSGallery installation policy to Trusted for this user.'
             Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
         }
