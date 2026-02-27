@@ -18,6 +18,9 @@ gui:
   showFileTree: true
   showIcons: true
 
+os:
+  editPreset: 'nvim'
+
 git:
   paging:
     colorArg: always
