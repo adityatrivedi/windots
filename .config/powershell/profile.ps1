@@ -14,6 +14,9 @@ if (-not $env:PAGER) { $env:PAGER = 'bat' }
 if (-not $env:BAT_CONFIG_DIR) { $env:BAT_CONFIG_DIR = Join-Path $env:XDG_CONFIG_HOME 'bat' }
 if (-not $env:BAT_CONFIG_PATH) { $env:BAT_CONFIG_PATH = Join-Path $env:BAT_CONFIG_DIR 'config' }
 
+# Prevent routing of native command failures through $ErrorActionPreference
+$PSNativeCommandUseErrorActionPreference = $false
+
 ############################################################
 # 1. Utilities
 ############################################################
