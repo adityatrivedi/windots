@@ -19,6 +19,9 @@ config.show_tab_index_in_tab_bar = true
 config.window_decorations = 'RESIZE'
 config.audible_bell = 'Disabled'
 config.window_close_confirmation = "NeverPrompt"
+config.scrollback_lines = 10000
+config.window_padding = { left = 8, right = 8, top = 8, bottom = 8 }
+config.cursor_blink_rate = 500
 
 -- Default shell: prefer PowerShell 7 if present
 local function has(exe)
