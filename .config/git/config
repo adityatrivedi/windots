@@ -26,6 +26,12 @@
 [maintenance]
     auto = true
     strategy = incremental
+[pull]
+    rebase = true
+[rebase]
+    autoStash = true
+[init]
+    defaultBranch = main
 [color]
     ui = auto
 [status]
