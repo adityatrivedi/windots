@@ -59,15 +59,16 @@ Key bootstrap flags:
 1. Detects / enables Developer Mode (only that step may elevate)
 2. Verifies functional non-admin symlink capability (falls back to elevated link if permitted)
 3. Normalizes environment (sets `XDG_CONFIG_HOME`, ensures consistent `$HOME/.config`)
-4. Installs Winget packages from manifest (idempotent, skip if already present)
-5. Installs required PowerShell modules (PSReadLine, CompletionPredictor) in current user scope
-6. Creates profile stubs that dot-source the central profile
-7. Links repo `.config/*` into `$HOME/.config/*` via symbolic links
+4. Installs winget (App Installer) automatically if not already present
+5. Installs Winget packages from manifest (idempotent, skip if already present)
+6. Installs required PowerShell modules (PSReadLine, CompletionPredictor) in current user scope
+7. Creates profile stubs that dot-source the central profile
+8. Links repo `.config/*` into `$HOME/.config/*` via symbolic links
 
 - Also ensures `%USERPROFILE%\.gitconfig` includes `~/.config/git/config` so Git reads the XDG config
 
-8. Runs optional verification (`self-test.ps1`) if `-Verify`
-9. Provides audit tooling to detect drift later (`audit.ps1`)
+9. Runs optional verification (`self-test.ps1`) if `-Verify`
+10. Provides audit tooling to detect drift later (`audit.ps1`)
 
 ---
 

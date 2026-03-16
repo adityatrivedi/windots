@@ -4,8 +4,9 @@ Bootstraps dotfiles environment on a Windows system.
 
 .DESCRIPTION
 Ensures symlink capability (optionally enabling Developer Mode), sets XDG config path,
-verifies winget, uses local repo, installs packages, modules, fonts, creates symlinked
-config directories, installs profile stubs, and runs self-tests optionally.
+installs winget (App Installer) automatically if missing, uses local repo, installs
+packages, modules, fonts, creates symlinked config directories, installs profile stubs,
+and runs self-tests optionally.
 #>
 [CmdletBinding()]
 param (
@@ -80,7 +81,7 @@ Examples:
 Behavior Summary:
     1. Ensures (or enables) Developer Mode for symlink privilege (may elevate only that registry write).
     2. Sets XDG_CONFIG_HOME (user scope) if not already set.
-    3. Verifies winget availability.
+    3. Installs winget (App Installer) automatically if not found on the system.
     4. Detects repo location ($HOME/.dotfiles or current directory).
     5. Installs packages, modules, font, links configs, installs profile stubs.
     6. Optional self-test (package drift, font, profile, symlink check).
@@ -154,10 +155,52 @@ function Set-XdgConfig {
     if (-not (Test-Path $cfg)) { New-Item -ItemType Directory -Path $cfg | Out-Null }
 }
 
-function Test-WingetAvailable {
+function Ensure-WingetAvailable {
     param()
     if (Get-Command winget -ErrorAction SilentlyContinue) { Write-Ok 'Winget is available.'; return }
-    throw "Winget is not available. Please install 'App Installer' from the Microsoft Store, and then re-run the bootstrap script."
+
+    Write-Info 'Winget not found. Installing App Installer (winget) automatically...'
+    $tmpDir = Join-Path $env:TEMP ('dotfiles_winget_' + [Guid]::NewGuid())
+    New-Item -ItemType Directory -Path $tmpDir -Force | Out-Null
+    try {
+        # 1. VCLibs dependency
+        $vcLibs = Join-Path $tmpDir 'Microsoft.VCLibs.x64.Desktop.appx'
+        Write-Info 'Downloading Microsoft.VCLibs.140.00.UWPDesktop...'
+        Invoke-WebRequest -Uri 'https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx' -OutFile $vcLibs -UseBasicParsing
+        Add-AppxPackage -Path $vcLibs -ErrorAction SilentlyContinue
+
+        # 2. Microsoft.UI.Xaml dependency (extract x64 appx from NuGet package)
+        $uiXamlNupkg = Join-Path $tmpDir 'Microsoft.UI.Xaml.nupkg.zip'
+        Write-Info 'Downloading Microsoft.UI.Xaml...'
+        Invoke-WebRequest -Uri 'https://www.nuget.org/api/v2/package/Microsoft.UI.Xaml/2.8.6' -OutFile $uiXamlNupkg -UseBasicParsing
+        $uiXamlDir = Join-Path $tmpDir 'uixaml'
+        Expand-Archive -Path $uiXamlNupkg -DestinationPath $uiXamlDir -Force
+        $uiXamlAppx = Join-Path $uiXamlDir 'tools\AppX\x64\Release\Microsoft.UI.Xaml.2.8.appx'
+        if (Test-Path $uiXamlAppx) {
+            Add-AppxPackage -Path $uiXamlAppx -ErrorAction SilentlyContinue
+        }
+        else { Write-Warn 'Microsoft.UI.Xaml appx not found at expected path; winget install may still succeed.' }
+
+        # 3. App Installer (winget)
+        $appInstaller = Join-Path $tmpDir 'AppInstaller.msixbundle'
+        Write-Info 'Downloading App Installer (winget)...'
+        Invoke-WebRequest -Uri 'https://aka.ms/getwinget' -OutFile $appInstaller -UseBasicParsing
+        Add-AppxPackage -Path $appInstaller
+
+        # Verify
+        if (Get-Command winget -ErrorAction SilentlyContinue) {
+            Write-Ok 'Winget installed successfully.'
+        }
+        else {
+            throw "Winget installation completed but 'winget' command is still not available. Please install 'App Installer' manually from the Microsoft Store and re-run bootstrap."
+        }
+    }
+    catch {
+        throw "Failed to install winget automatically: $($_.Exception.Message). Please install 'App Installer' from the Microsoft Store and re-run bootstrap."
+    }
+    finally {
+        Remove-Item -LiteralPath $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
 }
 
 function Invoke-PackageInstall { param(); & "$PSScriptRoot/install.ps1" }
@@ -228,7 +271,7 @@ function Ensure-BatSystemBatConfigSymlink {
 try {
     Ensure-DeveloperModeIfNeeded
     Set-XdgConfig
-    Test-WingetAvailable
+    Ensure-WingetAvailable
     $repoPath = Get-RepoLocal
     Push-Location $repoPath
     Invoke-PackageInstall
