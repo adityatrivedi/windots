@@ -2,6 +2,7 @@
 
 --theme="Catppuccin Macchiato"
 --style="numbers,changes,grid"
+--paging=auto
 --pager="less -FRX"
 --wrap=auto
 --tabs=4
