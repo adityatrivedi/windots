@@ -18,6 +18,12 @@ truncate_to_repo = false
 style = "bold yellow"
 format = "[$all_status$ahead_behind]($style) "
 
+[git_branch]
+style = "bold mauve"
+
+[package]
+disabled = true
+
 [cmd_duration]
 min_time = 2000
 format = "took [$duration]($style) "
