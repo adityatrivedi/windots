@@ -65,7 +65,10 @@ Import-SafeModule PSReadLine
 if (Get-Module PSReadLine) {
     Set-PSReadLineOption -EditMode Windows -ErrorAction SilentlyContinue
     Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -ErrorAction SilentlyContinue
+    Set-PSReadLineOption -HistorySearchCursorMovesToEnd -ErrorAction SilentlyContinue
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete -ErrorAction SilentlyContinue
+    Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
+    Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
     if (Get-Module -ListAvailable -Name CompletionPredictor) {
         Import-SafeModule CompletionPredictor
         Set-PSReadLineOption -PredictionSource HistoryAndPlugin -ErrorAction SilentlyContinue
