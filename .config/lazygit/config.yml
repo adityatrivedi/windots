@@ -2,6 +2,7 @@
 
 gui:
   nerdFontsVersion: "3"
+  showBottomLine: false
   theme:
     lightTheme: false
     # Catppuccin Macchiato palette
@@ -22,6 +23,7 @@ os:
   editPreset: 'nvim'
 
 git:
+  autoFetch: true
   paging:
     colorArg: always
     pager: "bat --style=plain --paging=never"
