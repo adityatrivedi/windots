@@ -12,21 +12,8 @@ vim.opt.rtp:prepend(lazypath)
 -- core options
 require('config.options')
 
--- plugins
-require('lazy').setup({
-  {
-    'catppuccin/nvim',
-    name = 'catppuccin',
-    priority = 1000,
-    opts = {
-      flavour = 'macchiato',
-    },
-    config = function(_, opts)
-      require('catppuccin').setup(opts)
-      vim.cmd.colorscheme('catppuccin')
-    end,
-  },
-})
+-- plugins (auto-imported from lua/plugins/)
+require('lazy').setup('plugins')
 
 -- keymaps: VS Code vs standalone
 if vim.g.vscode then
