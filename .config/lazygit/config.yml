@@ -18,15 +18,12 @@ gui:
   searchingActiveBorderColor: ["#eed49f", "bold"]
   showFileTree: true
   showIcons: true
-
 os:
   editPreset: 'nvim'
-
 git:
   autoFetch: true
-  paging:
-    colorArg: always
-    pager: "bat --style=plain --paging=never"
-
+  pagers:
+    - colorArg: always
+      pager: "bat --style=plain --paging=never"
 quitOnTopLevelReturn: true
 notARepository: "skip"
