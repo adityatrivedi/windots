@@ -3,6 +3,7 @@
  - Dot-sourced by per-shell stubs in standard $PROFILE locations
  - Keep lightweight: perform cheap checks first, then conditional inits
  - Idempotent: safe to Reload
+ - Non-essential tools (zoxide, CompletionPredictor) are deferred to OnIdle
 #>
 
 ############################################################
@@ -23,7 +24,7 @@ $PSNativeCommandUseErrorActionPreference = $false
 function Test-Cmd { param([Parameter(Mandatory)][string]$Name) [bool](Get-Command -Name $Name -ErrorAction SilentlyContinue) }
 function Import-SafeModule {
     param([Parameter(Mandatory)][string]$Name)
-    if (Get-Module -ListAvailable -Name $Name) { Import-Module $Name -ErrorAction SilentlyContinue }
+    if (-not (Get-Module -Name $Name)) { Import-Module $Name -ErrorAction SilentlyContinue }
 }
 function Refresh-Profile {
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -34,45 +35,29 @@ function Refresh-Profile {
 }
 
 ############################################################
-# 2. Prompt & Navigation Tools
+# 2. Prompt (synchronous — needed for first render)
 ############################################################
-function Initialize-Starship {
-    if (Test-Cmd starship) {
-        $env:STARSHIP_CONFIG = Join-Path $env:XDG_CONFIG_HOME 'starship/starship.toml'
-        try {
-            # PSScriptAnalyzer SuppressMessage PSAvoidUsingInvokeExpression Justification = 'Vendor init emits dynamic script'
-            Invoke-Expression (& starship init powershell)
-        }
-        catch { Write-Verbose ("Starship init failed: " + $_.Exception.Message) }
-    }
+if (Test-Cmd starship) {
+    $env:STARSHIP_CONFIG = Join-Path $env:XDG_CONFIG_HOME 'starship/starship.toml'
+    try { Invoke-Expression (& starship init powershell) }
+    catch { Write-Verbose ("Starship init failed: " + $_.Exception.Message) }
 }
-function Initialize-Zoxide {
-    if (Test-Cmd zoxide) {
-        try {
-            # PSScriptAnalyzer SuppressMessage PSAvoidUsingInvokeExpression Justification = 'Vendor init emits dynamic script'
-            Invoke-Expression (& { (zoxide init powershell | Out-String) })
-        }
-        catch { Write-Verbose ("Zoxide init failed: " + $_.Exception.Message) }
-    }
-}
-Initialize-Starship
-Initialize-Zoxide
 
 ############################################################
-# 3. Line Editing / Prediction
+# 3. Line Editing / Prediction (synchronous — needed for input)
 ############################################################
 Import-SafeModule PSReadLine
 if (Get-Module PSReadLine) {
-    Set-PSReadLineOption -EditMode Windows -ErrorAction SilentlyContinue
-    Set-PSReadLineOption -PredictionSource History -PredictionViewStyle ListView -ErrorAction SilentlyContinue
-    Set-PSReadLineOption -HistorySearchCursorMovesToEnd -ErrorAction SilentlyContinue
+    $psrlOpts = @{
+        EditMode                      = 'Windows'
+        PredictionSource              = 'History'
+        PredictionViewStyle           = 'ListView'
+        HistorySearchCursorMovesToEnd = $true
+    }
+    Set-PSReadLineOption @psrlOpts -ErrorAction SilentlyContinue
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete -ErrorAction SilentlyContinue
     Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
     Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
-    if (Get-Module -ListAvailable -Name CompletionPredictor) {
-        Import-SafeModule CompletionPredictor
-        Set-PSReadLineOption -PredictionSource HistoryAndPlugin -ErrorAction SilentlyContinue
-    }
 }
 
 ############################################################
@@ -93,3 +78,20 @@ Set-Alias -Name cat -Value bat -Option AllScope
 Set-Alias -Name ls -Value Get-ChildItemEza -Option AllScope
 Set-Alias -Name lg -Value lazygit
 Set-Alias -Name v -Value nvim
+
+############################################################
+# 6. Deferred Init (loads after first prompt via OnIdle)
+############################################################
+$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    # Zoxide (directory jumper)
+    if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+        try { Invoke-Expression (& { (zoxide init powershell | Out-String) }) }
+        catch {}
+    }
+
+    # CompletionPredictor (enhances PSReadLine predictions)
+    Import-Module CompletionPredictor -ErrorAction SilentlyContinue
+    if (Get-Module CompletionPredictor) {
+        Set-PSReadLineOption -PredictionSource HistoryAndPlugin -ErrorAction SilentlyContinue
+    }
+}
