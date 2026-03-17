@@ -1,7 +1,6 @@
 -- Standalone Neovim keymaps
 local map = vim.keymap.set
 vim.keymap.set("", "<Space>", "<Nop>")
-vim.g.mapleader = ' '
 
 -- Replace hjkl navigation with j k l ;
 -- Map: j->left, k->down, l->up, ;->right across normal/visual/operator-pending
