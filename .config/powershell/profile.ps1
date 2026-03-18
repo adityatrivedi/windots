@@ -87,12 +87,12 @@ function Get-ChildItemEza {
 ############################################################
 # 6. Aliases
 ############################################################
-Set-Alias -Name g -Value git
 Set-Alias -Name cat -Value bat -Option AllScope
-Set-Alias -Name ls -Value Get-ChildItemEza -Option AllScope
-Set-Alias -Name lg -Value lazygit
-Set-Alias -Name v -Value nvim
-Set-Alias -Name y -Value Invoke-Yazi
+Set-Alias -Name g   -Value git
+Set-Alias -Name lg  -Value lazygit
+Set-Alias -Name ls  -Value Get-ChildItemEza -Option AllScope
+Set-Alias -Name v   -Value nvim
+Set-Alias -Name y   -Value Invoke-Yazi
 
 ############################################################
 # 6. Deferred Init (loads after first prompt via OnIdle)
