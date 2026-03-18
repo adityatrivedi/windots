@@ -62,7 +62,20 @@ if (Get-Module PSReadLine) {
 }
 
 ############################################################
-# 4. Eza Configuration
+# 4. Yazi Wrapper (cd on exit)
+############################################################
+function Invoke-Yazi {
+    $tmp = [System.IO.Path]::GetTempFileName()
+    yazi $args --cwd-file="$tmp"
+    $cwd = Get-Content -Path $tmp -ErrorAction SilentlyContinue
+    if ($cwd -and $cwd -ne $PWD.Path -and (Test-Path $cwd)) {
+        Set-Location -LiteralPath $cwd
+    }
+    Remove-Item -Path $tmp -ErrorAction SilentlyContinue
+}
+
+############################################################
+# 5. Eza Configuration
 ############################################################
 function Get-ChildItemEza {
     param(
@@ -72,13 +85,14 @@ function Get-ChildItemEza {
 }
 
 ############################################################
-# 5. Aliases
+# 6. Aliases
 ############################################################
 Set-Alias -Name g -Value git
 Set-Alias -Name cat -Value bat -Option AllScope
 Set-Alias -Name ls -Value Get-ChildItemEza -Option AllScope
 Set-Alias -Name lg -Value lazygit
 Set-Alias -Name v -Value nvim
+Set-Alias -Name y -Value Invoke-Yazi
 
 ############################################################
 # 6. Deferred Init (loads after first prompt via OnIdle)

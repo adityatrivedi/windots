@@ -11,4 +11,7 @@ prepend_keymap = [
   # Shifted variants for preview scrolling
   { on = "J", run = "seek -5", desc = "Seek up 5 in preview" },
   { on = "K", run = "seek 5",  desc = "Seek down 5 in preview" },
+
+  # Shell command (default ; is now enter, so remap to h)
+  { on = "h", run = "shell --interactive", desc = "Run shell command" },
 ]
