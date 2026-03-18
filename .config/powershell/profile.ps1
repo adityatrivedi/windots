@@ -14,6 +14,7 @@ if (-not $env:EDITOR) { $env:EDITOR = 'nvim' }
 if (-not $env:PAGER) { $env:PAGER = 'bat' }
 if (-not $env:BAT_CONFIG_DIR) { $env:BAT_CONFIG_DIR = Join-Path $env:XDG_CONFIG_HOME 'bat' }
 if (-not $env:BAT_CONFIG_PATH) { $env:BAT_CONFIG_PATH = Join-Path $env:BAT_CONFIG_DIR 'config' }
+if (-not $env:YAZI_CONFIG_HOME) { $env:YAZI_CONFIG_HOME = Join-Path $env:XDG_CONFIG_HOME 'yazi' }
 
 # Prevent routing of native command failures through $ErrorActionPreference
 $PSNativeCommandUseErrorActionPreference = $false

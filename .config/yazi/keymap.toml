@@ -1,0 +1,14 @@
+# Navigation remapped to match nvim keybinds: j=left, k=down, l=up, ;=right
+
+[mgr]
+prepend_keymap = [
+  # Core navigation (j k l ; instead of h j k l)
+  { on = "j", run = "leave",      desc = "Parent directory" },
+  { on = "k", run = "arrow next", desc = "Next file" },
+  { on = "l", run = "arrow prev", desc = "Previous file" },
+  { on = ";", run = "enter",      desc = "Enter directory" },
+
+  # Shifted variants for preview scrolling
+  { on = "J", run = "seek -5", desc = "Seek up 5 in preview" },
+  { on = "K", run = "seek 5",  desc = "Seek down 5 in preview" },
+]
