@@ -62,5 +62,9 @@ PowerShell_transcript*/
 .config/**/sessions/**
 .config/**/session/**
 
+# Yazi fetched packages (restored via ya pkg install)
+.config/yazi/flavors/
+.config/yazi/plugins/
+
 # Allow explicitly tracked cache/log directories if ever added intentionally
 !*/.keep

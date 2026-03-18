@@ -334,6 +334,16 @@ try {
     & "$PSScriptRoot/profile-setup.ps1" -Quiet:$Quiet
     & "$PSScriptRoot/wt-theme.ps1" -Import -Quiet:$Quiet
     Ensure-BatSystemBatConfigSymlink
+    # Restore yazi packages (flavors/plugins) from package.toml
+    if (Get-Command ya -ErrorAction SilentlyContinue) {
+        $yaziPkg = Join-Path (Get-Location) '.config/yazi/package.toml'
+        if (Test-Path $yaziPkg) {
+            Write-Info 'Restoring yazi packages...'
+            $env:YAZI_CONFIG_HOME = Join-Path $HOME '.config/yazi'
+            ya pkg install 2>$null
+            Write-Ok 'Yazi packages restored.'
+        }
+    }
     if ($Verify) { & "$PSScriptRoot/self-test.ps1" -Quiet:$Quiet }
     Pop-Location
     Write-Ok 'Bootstrap completed successfully.'
