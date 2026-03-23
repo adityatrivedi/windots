@@ -3,7 +3,7 @@
 Installs packages listed in packages/windows-winget.json via winget.
 
 .DESCRIPTION
-Reads the manifest (array of package objects with ID and optional scope) and performs 
+Reads the manifest (array of package objects with ID and optional scope) and performs
 idempotent installations, preferring user scope unless scope is explicitly set to "machine".
 Skips already installed packages using a cached 'winget list' snapshot to reduce overhead.
 Safe for repeated runs and provides concise logging.
@@ -61,14 +61,14 @@ function Invoke-WingetInstall {
         [Parameter(Mandatory)][string]$Id,
         [string]$Scope = 'user'
     )
-    
+
     if ($Scope -eq 'machine') {
         Write-Info "Installing $Id via Winget (machine-scope)."
         $output = winget install --id $Id --source winget --silent --accept-package-agreements --accept-source-agreements 2>&1
         if ($LASTEXITCODE -ne 0) { throw "Winget installation failed for ${Id}: $output" }
         return
     }
-    
+
     Write-Info "Installing $Id via Winget in user-scope."
     $output = winget install --id $Id --source winget --silent --accept-package-agreements --accept-source-agreements --scope user 2>&1
     if ($LASTEXITCODE -eq 0) { return }
@@ -92,7 +92,7 @@ foreach ($pkg in $wingetPkgs) {
         $id = $pkg.id
         $scope = if ($pkg.PSObject.Properties['scope']) { $pkg.scope } else { 'user' }
     }
-    
+
     if (Test-Installed $id) {
         Write-Ok "Already installed: $id."; continue
     }

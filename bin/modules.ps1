@@ -22,11 +22,11 @@ if ($Quiet) { $Global:DOTFILES_QUIET = $true }
 function Set-Tls12IfNeeded {
     param()
     if ($PSVersionTable.PSVersion.Major -lt 6) {
-        try { 
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 
-        } 
-        catch { 
-            Write-Verbose 'Failed to set TLS1.2' 
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        }
+        catch {
+            Write-Verbose 'Failed to set TLS1.2'
         }
     }
 }
@@ -52,8 +52,8 @@ function Set-TrustedPSGallery {
             Write-Info 'Setting PSGallery installation policy to Trusted for this user.'
             Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
         }
-    } catch { 
-        Write-Warn "PSGallery repository not found: $($_.Exception.Message)" 
+    } catch {
+        Write-Warn "PSGallery repository not found: $($_.Exception.Message)"
     }
 }
 

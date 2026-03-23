@@ -1,12 +1,12 @@
 [user]
-	# Default user info (personal)
-	name = Aditya Trivedi
-	email = me@aditya.io
+    # Default user info (personal)
+    name = Aditya Trivedi
+    email = me@aditya.io
 [includeIf "gitdir/i:q:/"]
-	path = ~/.config/git/config-work
+    path = ~/.config/git/config-work
 
 [core]
-	safecrlf = warn
+    safecrlf = warn
     filemode = false
     autocrlf = input
     fsmonitor = true

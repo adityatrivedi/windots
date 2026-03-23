@@ -67,7 +67,7 @@ function Uninstall-Packages {
     foreach ($pkg in $pkgs) {
         # Support both string format (legacy) and object format with id/scope
         $id = if ($pkg -is [string]) { $pkg } else { $pkg.id }
-        
+
         Write-Info "Attempting to uninstall $id via Winget."
         $null = winget list -e --id $id 2>$null
         if ($LASTEXITCODE -ne 0) { Write-Ok "Not installed or not detectable: $id."; continue }

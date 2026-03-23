@@ -60,8 +60,8 @@ function Get-WingetInstalledVersion {
         if ($cols -and ($cols -is [System.Array]) -and $cols.Count -ge 3) {
             # Version is typically the third column
             $candidate = ($cols[2] -split '\s+')[0]
-            if ($candidate -and $candidate -match '^[0-9]') { 
-                return $candidate 
+            if ($candidate -and $candidate -match '^[0-9]') {
+                return $candidate
             }
         }
         # Fallback: scan all tokens for version-looking pattern
