@@ -36,6 +36,7 @@ o.inccommand = 'split'
 o.undofile = true
 o.swapfile = false
 o.backup = false
+o.hidden = true
 
 -- Behavior
 o.updatetime = 300
