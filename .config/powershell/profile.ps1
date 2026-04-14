@@ -87,6 +87,7 @@ function Get-ChildItemEza {
 ############################################################
 # 6. Aliases
 ############################################################
+function .. { Set-Location .. }
 Set-Alias -Name cat -Value bat -Option AllScope
 Set-Alias -Name g   -Value git
 Set-Alias -Name lg  -Value lazygit
