@@ -88,6 +88,14 @@ function Get-ChildItemEza {
 # 6. Aliases
 ############################################################
 function .. { Set-Location .. }
+function ... { Set-Location ..\.. }
+function .... { Set-Location ..\..\.. }
+function - { Set-Location - }
+function ~ { Set-Location ~ }
+function mkcd {
+    param([Parameter(Mandatory)][string]$Path)
+    New-Item -ItemType Directory -Path $Path -Force | Set-Location
+}
 Set-Alias -Name cat -Value bat -Option AllScope
 Set-Alias -Name g   -Value git
 Set-Alias -Name lg  -Value lazygit
