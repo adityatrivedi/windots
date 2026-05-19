@@ -38,6 +38,9 @@ o.swapfile = false
 o.backup = false
 o.hidden = true
 
+-- Backspace
+o.backspace = 'indent,eol,start' -- Allow backspace on indent, EOL, or insert mode start position
+
 -- Behavior
 o.updatetime = 300
 o.timeoutlen = 400
