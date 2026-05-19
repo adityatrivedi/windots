@@ -20,5 +20,6 @@
   { "id": "sharkdp.fd" },
   { "id": "Starship.Starship" },
   { "id": "sxyazi.yazi" },
-  { "id": "wez.wezterm", "scope": "machine" }
+  { "id": "wez.wezterm", "scope": "machine" },
+  { "id": "zig.zig" }
 ]

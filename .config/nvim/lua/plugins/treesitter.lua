@@ -1,5 +1,9 @@
 return {
   'nvim-treesitter/nvim-treesitter',
+  -- Pin to the classic, stable branch. The default `main` branch is the
+  -- in-progress rewrite and drops the legacy `parsers.ft_to_lang` API that
+  -- telescope.nvim (and many other plugins) still rely on.
+  branch = 'master',
   build = ':TSUpdate',
   event = { 'BufReadPost', 'BufNewFile' },
   opts = {
@@ -49,6 +53,9 @@ return {
     },
   },
   config = function(_, opts)
-    require('nvim-treesitter').setup(opts)
+    -- Prefer zig as the C compiler for parser builds. It's the smallest, most
+    -- portable option on Windows and is installed via the winget manifest.
+    require('nvim-treesitter.install').compilers = { 'zig' }
+    require('nvim-treesitter.configs').setup(opts)
   end,
 }
